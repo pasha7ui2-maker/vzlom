@@ -8,7 +8,7 @@ on:
       - ".github/workflows/build-exe.yml"
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   build:
@@ -24,10 +24,20 @@ jobs:
         run: python -m pip install --upgrade pyinstaller
       - name: Build standalone EXE
         run: pyinstaller --onefile --windowed --name CyberScanner cyber_scanner_gui.py
-      - name: Upload EXE
+      - name: Upload EXE as workflow artifact
         uses: actions/upload-artifact@v4
         with:
           name: CyberScanner-Windows
           path: dist/CyberScanner.exe
           if-no-files-found: error
           retention-days: 14
+      - name: Publish EXE to GitHub Releases
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RUN_NUMBER: ${{ github.run_number }}
+        run: |
+          TAG="v1.0.${RUN_NUMBER}"
+          gh release create "${TAG}" dist/CyberScanner.exe \
+            --title "Cyber Scanner ${TAG}" \
+            --notes "Windows standalone build of Cyber Scanner. Download CyberScanner.exe and run it on Windows. Use only on systems you own or are authorized to test."

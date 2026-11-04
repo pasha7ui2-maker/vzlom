@@ -1,4 +1,4 @@
-name: Build Windows EXE
+name: Build CyberLab Windows EXE
 
 on:
   workflow_dispatch:
@@ -23,12 +23,12 @@ jobs:
       - name: Install PyInstaller
         run: python -m pip install --upgrade pyinstaller
       - name: Build standalone EXE
-        run: pyinstaller --onefile --windowed --name CyberScanner cyber_scanner_gui.py
+        run: pyinstaller --onefile --windowed --name CyberLab cyber_scanner_gui.py
       - name: Upload EXE as workflow artifact
         uses: actions/upload-artifact@v4
         with:
-          name: CyberScanner-Windows
-          path: dist/CyberScanner.exe
+          name: CyberLab-Windows
+          path: dist/CyberLab.exe
           if-no-files-found: error
           retention-days: 14
       - name: Publish EXE to GitHub Releases
@@ -37,7 +37,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           RUN_NUMBER: ${{ github.run_number }}
         run: |
-          TAG="v1.0.${RUN_NUMBER}"
-          gh release create "${TAG}" dist/CyberScanner.exe \
-            --title "Cyber Scanner ${TAG}" \
-            --notes "Windows standalone build of Cyber Scanner. Download CyberScanner.exe and run it on Windows. Use only on systems you own or are authorized to test."
+          TAG="v2.0.${RUN_NUMBER}"
+          gh release create "${TAG}" dist/CyberLab.exe \
+            --title "CyberLab ${TAG}" \
+            --notes "CyberLab Windows desktop toolkit: offline URL heuristics, local password checks, SHA-256 file integrity, and limited authorized network diagnostics. Use network checks only on systems you own or are authorized to test."
